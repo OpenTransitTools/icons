@@ -1,13 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
-import urllib2
-import csv
 import os
-import zipfile
 from StringIO import StringIO
 
-maps7_url = "http://maps7.trimet.org/pelias/"
-trimet_zip = maps7_url + "TRIMET.zip"
-out_dir = r"G:\PUBLIC\GIS\MOD\Map_Tiles\png"
 transit_bold = ImageFont.truetype(r"G:\PUBLIC\GIS\MOD\Map_Tiles\Transit Print PCPS\Transit-Bold\Transit-Bold.ttf", 12)
 
 
@@ -54,23 +48,40 @@ def draw_ellipse(image, bounds, width=1, outline='white', antialias=4):
     image.paste(outline, mask=mask)
     return
 
-response = urllib2.urlopen(trimet_zip)
-zipfile_object = response.read()
 
-with zipfile.ZipFile(StringIO(zipfile_object), "r") as maps7_zip:
-    with maps7_zip.open('routes.txt') as current_file:
-        stops_string = current_file.read()
+def from_gtfs_routes():
+    import urllib2
+    import csv
+    import zipfile
 
-routes_list = []
-
-reader = csv.reader(stops_string.split("\r\n"), delimiter=",", quotechar='"', quoting=csv.QUOTE_ALL, skipinitialspace=True)
-for r in reader:
-    if r:
-        routes_list.append(r)
-
-del routes_list[0]
+    maps7_url = "http://maps7.trimet.org/pelias/"
+    trimet_zip = maps7_url + "TRIMET.zip"
+    out_dir = r"G:\PUBLIC\GIS\MOD\Map_Tiles\png"
 
 
-for route in routes_list:
-    if route[2]:
-        create_png(route[0])
+
+    response = urllib2.urlopen(trimet_zip)
+    zipfile_object = response.read()
+
+    with zipfile.ZipFile(StringIO(zipfile_object), "r") as maps7_zip:
+        with maps7_zip.open('routes.txt') as current_file:
+            stops_string = current_file.read()
+
+    routes_list = []
+
+    reader = csv.reader(stops_string.split("\r\n"), delimiter=",", quotechar='"', quoting=csv.QUOTE_ALL, skipinitialspace=True)
+    for r in reader:
+        if r:
+            routes_list.append(r)
+
+    del routes_list[0]
+
+
+    for route in routes_list:
+        if route[2]:
+            create_png(route[0])
+
+
+def main():
+    pass
+ 
