@@ -1,8 +1,10 @@
 import os
+from ott.utils import file_utils
 from PIL import Image, ImageDraw, ImageFont
 
 
-transit_bold = ImageFont.truetype(r"fonts/Transit-Bold.ttf", 12)
+font_file = os.path.join(file_utils.get_file_dir(__file__), 'fonts', 'Transit-Bold.ttf')
+transit_bold = ImageFont.truetype(font_file, 12)
 
 
 def draw_ellipse(image, bounds, width=1, outline='white', antialias=4):
@@ -13,7 +15,8 @@ def draw_ellipse(image, bounds, width=1, outline='white', antialias=4):
     # to get smoother looking results.
     mask = Image.new(
         size=[int(dim * antialias) for dim in image.size],
-        mode='RGBA', color=(0, 0, 0, 0))
+        mode='RGBA', color=(0, 0, 0, 0)
+    )
     draw = ImageDraw.Draw(mask)
 
     # draw outer shape in white (color) and inner shape in black (transparent)
@@ -57,8 +60,6 @@ def from_gtfs_routes():
     trimet_zip = maps7_url + "TRIMET.zip"
     out_dir = r"G:\PUBLIC\GIS\MOD\Map_Tiles\png"
 
-
-
     response = urllib2.urlopen(trimet_zip)
     zipfile_object = response.read()
 
@@ -82,5 +83,5 @@ def from_gtfs_routes():
 
 
 def main():
-    pass
+    create_png("31")
  

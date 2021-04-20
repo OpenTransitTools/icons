@@ -8,6 +8,7 @@ CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
 requires = [
     'ott.utils',
+    'freetype-py',
     'pillow',
 ]
 
@@ -42,6 +43,6 @@ setup(
     test_suite="ott.icons.tests",
     entry_points="""
         [console_scripts]
-        download_data = ott.icons.icons:download_data
+        one_label = ott.icons.route_labels:main
     """,
 )
