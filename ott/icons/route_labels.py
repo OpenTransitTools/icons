@@ -1,27 +1,8 @@
-from PIL import Image, ImageDraw, ImageFont
 import os
-from StringIO import StringIO
-
-transit_bold = ImageFont.truetype(r"G:\PUBLIC\GIS\MOD\Map_Tiles\Transit Print PCPS\Transit-Bold\Transit-Bold.ttf", 12)
+from PIL import Image, ImageDraw, ImageFont
 
 
-def create_png(text):
-    width, height = 20, 20
-    canvas = Image.new('RGBA', (width, height), (0, 0, 0, 0))
-
-    bbox = (1, 1, 19, 19)
-
-    draw = ImageDraw.Draw(canvas)
-    text_width, text_height = draw.textsize(text, font=transit_bold)
-
-    # draw.ellipse(bbox, fill="#6884ae", outline="#6884ae")
-    draw_ellipse(canvas, bbox, outline='#6884ae', width=0, antialias=8)
-    draw.text(((21 - text_width) / 2, (17 - text_height) / 2), text, '#FFF', transit_bold)
-
-    # save the blank canvas to a file
-    out_png = os.path.join(out_dir, str(text).zfill(3) + ".png")
-    canvas.save(out_png, "PNG", dpi=(600, 600))
-    return
+transit_bold = ImageFont.truetype(r"fonts/Transit-Bold.ttf", 12)
 
 
 def draw_ellipse(image, bounds, width=1, outline='white', antialias=4):
@@ -41,18 +22,36 @@ def draw_ellipse(image, bounds, width=1, outline='white', antialias=4):
     right, bottom = [(value - offset) * antialias for value in bounds[2:]]
     draw.ellipse([left, top, right, bottom], fill=fill)
 
-    # downsample the mask using PIL.Image.LANCZOS
-    # (a high-quality downsampling filter).
+    # downsample the mask using PIL.Image.LANCZOS (a high-quality downsampling filter)
     mask = mask.resize(image.size, Image.LANCZOS)
+
     # paste outline color to input image through the mask
     image.paste(outline, mask=mask)
-    return
+
+
+def create_png(text, out_dir=".", font=transit_bold, outline_color="#6884ae", text_color="#FFF"):
+    width, height = 20, 20
+    canvas = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+
+    bbox = (1, 1, 19, 19)
+
+    draw = ImageDraw.Draw(canvas)
+    text_width, text_height = draw.textsize(text, font=font)
+
+    # draw.ellipse(bbox, fill="#6884ae", outline="#6884ae")
+    draw_ellipse(canvas, bbox, outline=outline_color, width=0, antialias=8)
+    draw.text(((21 - text_width) / 2, (17 - text_height) / 2), text, text_color, font)
+
+    # save the blank canvas to a file
+    out_png = os.path.join(out_dir, str(text).zfill(3) + ".png")
+    canvas.save(out_png, "PNG", dpi=(600, 600))
 
 
 def from_gtfs_routes():
     import urllib2
     import csv
     import zipfile
+    from StringIO import StringIO
 
     maps7_url = "http://maps7.trimet.org/pelias/"
     trimet_zip = maps7_url + "TRIMET.zip"
