@@ -8,8 +8,8 @@ CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
 requires = [
     'ott.utils',
-    'freetype-py',
-    'pillow',
+    'pillow==5.4.1',
+    'decorator==4.3.2'
 ]
 
 extras_require = dict(
